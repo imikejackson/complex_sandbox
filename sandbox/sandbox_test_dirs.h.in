@@ -1,0 +1,20 @@
+#pragma once
+
+#include "complex/Common/StringLiteral.hpp"
+
+namespace complex
+{
+namespace unit_test
+{
+constexpr StringLiteral k_ComplexSourceDir = "@sandbox_SOURCE_DIR_NORM@";
+constexpr StringLiteral k_ComplexBinaryDir = "@sandbox_BINARY_DIR_NORM@";
+
+#ifdef CMAKE_INTDIR
+constexpr StringLiteral k_BuildTypeDir = CMAKE_INTDIR;
+#else
+constexpr StringLiteral k_BuildTypeDir = "";
+#endif
+
+constexpr StringLiteral k_BuildDir = "@CMAKE_LIBRARY_OUTPUT_DIRECTORY@";
+}
+} // namespace complex
