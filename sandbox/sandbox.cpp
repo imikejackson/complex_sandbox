@@ -27,6 +27,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <iostream>
+#include <memory>
 
 #define CREATE_FILTER_HANDLE_CONSTANT(var_name, filter_uuid_string, plugin_uuid_string) \
 const FilterHandle k_##var_name(Uuid::FromString(filter_uuid_string).value(), Uuid::FromString(plugin_uuid_string).value());
@@ -45,9 +46,12 @@ constexpr StringLiteral k_ComplexCore_Uuid = "05cc618b-781f-4ac0-b9ac-43f26ce185
 // Filter Uuids
 constexpr StringLiteral k_ExampleFilter2_Uuid = "1307bbbc-112d-4aaa-941f-58253787b17e";
 constexpr StringLiteral k_CreateDataArray_Uuid = "67041f9b-bdc6-4122-acc6-c9fe9280e90d";
+constexpr StringLiteral k_ImportTextFilter_Uuid = "25f7df3e-ca3e-4634-adda-732c0e56efd4";
+
 // Filter Handles
 CREATE_FILTER_HANDLE_CONSTANT(ExampleFilter2Handle, k_ExampleFilter2_Uuid, k_ComplexCore_Uuid)
 CREATE_FILTER_HANDLE_CONSTANT(CreateDataArrayHandle, k_CreateDataArray_Uuid, k_ComplexCore_Uuid)
+CREATE_FILTER_HANDLE_CONSTANT(ImportTextFilterHandle, k_ImportTextFilter_Uuid, k_ComplexCore_Uuid)
 }
 }
 using namespace complex;
@@ -68,7 +72,7 @@ DataArray<T>* ReadFromFile(const std::string& filename, const std::string& name,
     return nullptr;
   }
 
-  DataStoreType* dataStore = new DataStoreType( {numTuples}, numComponents);
+  std::shared_ptr<DataStoreType> dataStore = std::shared_ptr<DataStoreType>( new DataStoreType({numTuples}, numComponents));
   ArrayType* dataArray = ArrayType::Create(*dataGraph, name, dataStore, parentId);
 
   const size_t fileSize = fs::file_size(filename);
@@ -141,7 +145,8 @@ void ReadFileSystemIntoDataGraph()
   fs::path filePath = fmt::format("{}/file_system_test.h5", complex::unit_test::k_ComplexBinaryDir);
   {
     std::cout << "Writing DataStructure File ...  " << std::endl;
-    H5::FileWriter fileWriter(filePath);
+    Result<H5::FileWriter> result = H5::FileWriter::CreateFile(filePath);
+    H5::FileWriter fileWriter = std::move(result.value());
     herr_t err = dataGraph->writeHdf5(fileWriter);
   }
 }
@@ -194,8 +199,7 @@ std::shared_ptr<DataStructure> CreateDataStructure()
   DataGroup* phaseGroup = complex::DataGroup::Create(*dataGraph, "Phase Data", group->getId());
   compDims = {1};
   tupleCount = 2;
-  Int32DataStore* laueDataStore = new Int32DataStore(compDims, {tupleCount});
-  Int32Array::Create(*dataGraph, "Laue Class", laueDataStore, phaseGroup->getId());
+  Int32Array::CreateWithStore<Int32DataStore>(*dataGraph, "Laue Class",{2}, {1}, phaseGroup->getId());
 
   return dataGraph;
 }
@@ -368,8 +372,8 @@ int32_t main(int32_t argc, char** args)
   fs::path filePath = fmt::format("{}/image_geometry_io.h5", complex::unit_test::k_ComplexBinaryDir);
   {
     std::cout << "Writing DataStructure File ...  " << std::endl;
-
-    H5::FileWriter fileWriter(filePath);
+    Result<H5::FileWriter> result = H5::FileWriter::CreateFile(filePath);
+    H5::FileWriter fileWriter = std::move(result.value());
     herr_t err = dataGraph->writeHdf5(fileWriter);
   }
 

@@ -180,46 +180,5 @@ endfunction()
 set(COMPLEX_PLUGIN_OUTPUT_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Plugins)
 set_property(GLOBAL PROPERTY COMPLEX_PLUGIN_OUTPUT_DIR ${COMPLEX_PLUGIN_OUTPUT_DIR})
 
-#-----------------
-# These are the core plugins that need to be built
-set(sandbox_BASE_PLUGINS
-#    AFRLDistributionC
-#    BrukerIntegration
-#    CAxisByPolarizedLight
-#    CRADA3DSystems
-#    DREAM3DReview
-#    ECAccess
-#    EMMPM
-#    Generic
-#    ImageProcessing
-#    ImportExport
-#    ITKImageProcessing
-#    NETLIntegration
-#    OrientationAnalysis
-#    Processing
-#    ProgWorkshop
-#    Reconstruction
-#    Sampling
-#    SimulationIO
-#    StatsToolbox
-#    SurfaceMeshing
-#    SyntheticBuilding
-#    UCSBUtilities
-#    VolumeMeshing
-)
-
-#get_filename_component(sandbox_PARENT_DIR  ${sandbox_SOURCE_DIR} DIRECTORY)
-set(sandbox_ALL_PLUGINS ${sandbox_BASE_PLUGINS} ${sandbox_EXTRA_PLUGINS} )
-
-message(STATUS "*******************************************************")
-message(STATUS "* Base Plugins                                        *")
-message(STATUS "*******************************************************")
-sandbox_ADD_PLUGINS(PLUGIN_NAMES ${sandbox_BASE_PLUGINS})
-
-
-message(STATUS "*******************************************************")
-message(STATUS "* Extra External Plugins                              *")
-message(STATUS "*******************************************************")
-sandbox_ADD_PLUGINS(PLUGIN_NAMES ${sandbox_EXTRA_PLUGINS})
-
+enable_testing()
 
