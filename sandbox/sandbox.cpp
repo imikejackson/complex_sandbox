@@ -155,12 +155,8 @@ std::shared_ptr<DataStructure> CreateDataStructure()
 {
   std::shared_ptr<DataStructure> dataGraph = std::shared_ptr<DataStructure>(new DataStructure);
 
-  //dataGraph->makePath(DataPath::FromString("1/2/3/4/5").value());
-
   DataGroup* group = complex::DataGroup::Create(*dataGraph, "Small IN100");
   DataGroup* scanData = complex::DataGroup::Create(*dataGraph, "EBSD Scan Data", group->getId());
-
-  //dataGraph->makePath(DataPath::FromString("Small IN100/EBSD Scan Data/3/4/5").value());
 
   // Create an Image Geometry grid for the Scan Data
   ImageGeom* imageGeom = ImageGeom::Create(*dataGraph, "Small IN100 Grid", scanData->getId());
@@ -192,8 +188,6 @@ std::shared_ptr<DataStructure> CreateDataStructure()
   fileName = "IPFColors.raw";
   compDims = {3};
   ReadFromFile<uint8_t>(filePath + fileName, "IPF Colors", dataGraph.get(), tupleCount, compDims, scanData->getId());
-
-
 
   // Add in another group that is just information about the grid data.
   DataGroup* phaseGroup = complex::DataGroup::Create(*dataGraph, "Phase Data", group->getId());
