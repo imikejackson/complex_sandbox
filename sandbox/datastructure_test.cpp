@@ -1,7 +1,7 @@
 #include <cstdint>
 
 #include "complex/DataStructure/DataStructure.hpp"
-#include "complex/Utilities/UnitTestCommon.hpp"
+#include "complex/UnitTest/UnitTestCommon.hpp"
 #include "complex/DataStructure/DataObject.hpp"
 #include "complex/Utilities/Parsing/HDF5/H5FileWriter.hpp"
 
