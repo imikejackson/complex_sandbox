@@ -558,7 +558,9 @@ void CreateFilterSource(const nlohmann::json& rootJson)
   }
 
   GeneratePixelTypeDefines(pixelTypes, vectorPixelTypes, outputPixelType, pixelTypeDefines);
-
+  std::string itkArrayHelperNamespace = rootJson["name"].get<std::string>();
+  itkArrayHelperNamespace = ReplaceKeywords(itkArrayHelperNamespace, "Filter", "");
+  pixelTypeDefines << "#define ITK_ARRAY_HELPER_NAMESPACE " << itkArrayHelperNamespace << "\n";
 
   if(rootJson.find("filter_type") != rootJson.end())
   {
@@ -599,8 +601,8 @@ void CreateFilterSource(const nlohmann::json& rootJson)
       itkFunctorOut << "using FilterOutputType = " << outputPixelType << ";\n\n";
     }
   }
-  dataCheckDeclOut << "  complex::Result<OutputActions> resultOutputActions = ITK::DataCheck"<< filterOutputTypePlaceHolder<<"(dataStructure, pSelectedInputArray, pImageGeomPath, pOutputArrayPath);\n";
-  executeDeclOut  << " return ITK::Execute"<< filterOutputTypeExeTemplateDef<<"(dataStructure, pSelectedInputArray, pImageGeomPath, pOutputArrayPath, itkFunctor);";
+  dataCheckDeclOut << "  complex::Result<OutputActions> resultOutputActions = " << itkArrayHelperNamespace  << "::ITK::DataCheck"<< filterOutputTypePlaceHolder<<"(dataStructure, pSelectedInputArray, pImageGeomPath, pOutputArrayPath);\n";
+  executeDeclOut  << " return "<< itkArrayHelperNamespace << "::ITK::Execute"<< filterOutputTypeExeTemplateDef<<"(dataStructure, pSelectedInputArray, pImageGeomPath, pOutputArrayPath, itkFunctor);";
 
   itkFunctorOut  << "struct " << filterName << "CreationFunctor\n{\n";
 
